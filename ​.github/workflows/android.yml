@@ -22,9 +22,24 @@ jobs:
             sudo apt-get update && sudo apt-get install -y unzip
             echo "📦 Unzipping Gajidadaswitch.zip..."
             unzip -q Gajidadaswitch.zip -d extracted
-            cd extracted
-            cd $(ls -d */ | head -n 1)
+          else
+            echo "📁 No zip file found, looking in root..."
+            mkdir -p extracted
+            cp -r * extracted/ 2>/dev/null || true
           fi
+          
+          # ऑटोमैटिक रूप से उस फोल्डर को ढूंढें जिसमें gradlew मौजूद है
+          echo "🔍 Searching for gradlew inside extracted files..."
+          GRADLEW_PATH=$(find extracted -name "gradlew" -type f | head -n 1)
+          
+          if [ -z "$GRADLEW_PATH" ]; then
+            echo "❌ Error: gradlew file poore project me kahin nahi mili!"
+            exit 1
+          fi
+          
+          PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+          echo "✅ Found gradlew at: $PROJECT_DIR"
+          cd "$PROJECT_DIR"
           
           echo "🛠️ Building APK..."
           chmod +x gradlew
