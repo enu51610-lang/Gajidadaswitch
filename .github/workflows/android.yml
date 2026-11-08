@@ -52,7 +52,7 @@ jobs:
           include ':app'
           EOF
 
-          # 3. gradle-wrapper.properties (Gradle 8.5 सीधे सेट करें)
+          # 3. gradle-wrapper.properties
           cat << 'EOF' > GajiApp/gradle/wrapper/gradle-wrapper.properties
           distributionBase=GRADLE_USER_HOME
           distributionPath=wrapper/dists
@@ -63,8 +63,10 @@ jobs:
           zipStorePath=wrapper/dists
           EOF
 
-          # 4. gradlew script डाउनलोड करें ताकि कमांड की जरूरत न पड़े
+          # 4. सही gradlew और gradle-wrapper.jar सीधे गिटहब से डाउनलोड करें
+          mkdir -p GajiApp/gradle/wrapper
           curl -s https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradlew > GajiApp/gradlew
+          curl -s https://raw.githubusercontent.com/gradle/gradle/v8.5.0/subprojects/wrapper/src/main/resources/org/gradle/wrapper/gradle-wrapper.jar > GajiApp/gradle/wrapper/gradle-wrapper.jar
           chmod +x GajiApp/gradlew
 
           # 5. build.gradle (app level)
@@ -369,7 +371,7 @@ jobs:
 
           # सीधे APK बिल्ड शुरू करें
           cd GajiApp
-          echo "🛠️ Building APK using Gradle 8.5..."
+          echo "🛠️ Building APK..."
           ./gradlew assembleDebug
 
       - name: Upload APK
