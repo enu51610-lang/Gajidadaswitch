@@ -13,12 +13,25 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Unzip & Build
+      - name: Unzip and Build APK
         run: |
           sudo apt-get update && sudo apt-get install -y unzip
-          unzip -q Gajidadaswitch.zip -d extracted_folder
-          cd extracted_folder
-          cd $(ls -d */ | head -n 1)
+          
+          # ज़िप फाइल को एक्सट्रेक्ट करें
+          unzip -q Gajidadaswitch.zip -d extracted_project
+          
+          # फोल्डर के अंदर चेक करें कि gradlew कहाँ है और सीधे वहीं पहुँच जाएं
+          cd extracted_project
+          TARGET_DIR=$(find . -name "gradlew" -maxdepth 3 -exec dirname {} \;)
+          
+          if [ -z "$TARGET_DIR" ]; then
+            echo "❌ Error: gradlew file nahi mili zip ke andar!"
+            exit 1
+          fi
+          
+          echo "📂 Found project in: $TARGET_DIR"
+          cd "$TARGET_DIR"
+          
           chmod +x gradlew
           ./gradlew assembleDebug
 
