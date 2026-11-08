@@ -18,38 +18,20 @@ jobs:
         run: |
           echo "🛠️ Generating Android project structure..."
           
-          # एक नया एंड्रॉइड प्रोजेक्ट फोल्डर बनाएं
           mkdir -p GajiApp/app/src/main/java/com/gajidadaswitch/app
           mkdir -p GajiApp/app/src/main/res/layout
-          mkdir -p GajiApp/app/src/main/res/mipmap-hdpi
-          mkdir -p GajiApp/app/src/main/res/mipmap-mdpi
-          mkdir -p GajiApp/app/src/main/res/mipmap-xhdpi
-          mkdir -p GajiApp/app/src/main/res/mipmap-xxhdpi
-          mkdir -p GajiApp/app/src/main/res/mipmap-xxxhdpi
 
-          # 1. build.gradle (project level)
+          # 1. build.gradle (project level) - अब यहाँ रिपॉजिटरी नहीं रखी जाएगी
           cat << 'EOF' > GajiApp/build.gradle
-          buildscript {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-              dependencies {
-                  classpath "com.android.tools.build:gradle:8.1.1"
-              }
-          }
-          allprojects {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
+          plugins {
+              id 'com.android.application' version '8.1.1' apply false
           }
           task clean(type: Delete) {
               delete rootProject.buildDir
           }
           EOF
 
-          # 2. settings.gradle
+          # 2. settings.gradle - सारी रिपॉजिटरी यहीं रहेंगी
           cat << 'EOF' > GajiApp/settings.gradle
           pluginManagement {
               repositories {
@@ -294,7 +276,7 @@ jobs:
                       public void run() {
                           String foundIp = "";
                           String subnet = "192.168.1."; 
-                          for (int i = 1; i <= 254; i++) {
+                          for (int i = 1; i <= <=254; i++) {
                               if (!isScanning) break;
                               String testUrl = "http://" + subnet + i;
                               if (isDeviceGajiSwitch(testUrl)) {
