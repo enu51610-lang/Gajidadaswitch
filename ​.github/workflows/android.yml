@@ -13,11 +13,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build APK
+      - name: Unzip Project & Build APK
         run: |
           echo "📂 Checking repository contents..."
           ls -la
           
+          # अगर ज़िप फाइल मौजूद है तो उसे अनजिप करें
           if [ -f "Gajidadaswitch.zip" ]; then
             sudo apt-get update && sudo apt-get install -y unzip
             echo "📦 Unzipping Gajidadaswitch.zip..."
@@ -33,7 +34,7 @@ jobs:
           GRADLEW_PATH=$(find extracted -name "gradlew" -type f | head -n 1)
           
           if [ -z "$GRADLEW_PATH" ]; then
-            echo "❌ Error: gradlew file poore project me kahin nahi mili!"
+            echo "❌ Error: gradlew file project me kahin nahi mili!"
             exit 1
           fi
           
