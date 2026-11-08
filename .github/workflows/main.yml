@@ -1,0 +1,26 @@
+name: Build Android APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Extract Project
+        run: |
+          unzip Gajidadaswitch.zip -d extracted_project
+          ls -R extracted_project
+      - name: Build Debug APK
+        run: |
+          cd extracted_project/*/ || cd extracted_project/
+          ./gradlew assembleDebug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: '**/build/outputs/apk/debug/*.apk'
