@@ -18,17 +18,15 @@ jobs:
           echo "📂 Checking repository contents..."
           ls -la
           
-          # अगर ज़िप फाइल मौजूद है तो उसे अनजिप करें
           if [ -f "Gajidadaswitch.zip" ]; then
             sudo apt-get update && sudo apt-get install -y unzip
             echo "📦 Unzipping Gajidadaswitch.zip..."
             unzip -q Gajidadaswitch.zip -d extracted
             cd extracted
-            # अंदर के मुख्य प्रोजेक्ट फोल्डर में प्रवेश करें
             cd $(ls -d */ | head -n 1)
           fi
           
-          echo "🛠️ Preparing gradlew and building APK..."
+          echo "🛠️ Building APK..."
           chmod +x gradlew
           ./gradlew assembleDebug
 
@@ -37,4 +35,3 @@ jobs:
         with:
           name: app-debug
           path: '**/build/outputs/apk/debug/*.apk'
-
