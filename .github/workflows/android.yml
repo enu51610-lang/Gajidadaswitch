@@ -14,12 +14,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Create Android Project Structure
+      - name: Create Android Project Structure & Wrapper
         run: |
           echo "🛠️ Generating Android project structure..."
           
           mkdir -p GajiApp/app/src/main/java/com/gajidadaswitch/app
           mkdir -p GajiApp/app/src/main/res/layout
+          mkdir -p GajiApp/gradle/wrapper
 
           # 1. build.gradle (project level)
           cat << 'EOF' > GajiApp/build.gradle
@@ -51,7 +52,22 @@ jobs:
           include ':app'
           EOF
 
-          # 3. build.gradle (app level)
+          # 3. gradle-wrapper.properties (Gradle 8.5 सीधे सेट करें)
+          cat << 'EOF' > GajiApp/gradle/wrapper/gradle-wrapper.properties
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
+          networkTimeout=10000
+          validateDistributionUrl=true
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          EOF
+
+          # 4. gradlew script डाउनलोड करें ताकि कमांड की जरूरत न पड़े
+          curl -s https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradlew > GajiApp/gradlew
+          chmod +x GajiApp/gradlew
+
+          # 5. build.gradle (app level)
           cat << 'EOF' > GajiApp/app/build.gradle
           plugins {
               id 'com.android.application'
@@ -83,7 +99,7 @@ jobs:
           }
           EOF
 
-          # 4. AndroidManifest.xml
+          # 6. AndroidManifest.xml
           cat << 'EOF' > GajiApp/app/src/main/AndroidManifest.xml
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -105,7 +121,7 @@ jobs:
           </manifest>
           EOF
 
-          # 5. activity_main.xml (डार्क थीम और डुअल IP बटन वाला लेआउट)
+          # 7. activity_main.xml (डार्क थीम और डुअल IP बटन वाला लेआउट)
           cat << 'EOF' > GajiApp/app/src/main/res/layout/activity_main.xml
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -169,7 +185,7 @@ jobs:
           </LinearLayout>
           EOF
 
-          # 6. MainActivity.java (ऑटो-स्कैन और आईपी सेव करने वाला लॉजिक)
+          # 8. MainActivity.java (ऑटो-स्कैन और आईपी सेव करने वाला लॉजिक)
           cat << 'EOF' > GajiApp/app/src/main/java/com/gajidadaswitch/app/MainActivity.java
           package com.gajidadaswitch.app;
 
@@ -351,11 +367,9 @@ jobs:
           }
           EOF
 
-          # Gradle Wrapper सेट करें और बिल्ड शुरू करें
+          # सीधे APK बिल्ड शुरू करें
           cd GajiApp
-          gradle wrapper --gradle-version 8.5
-          chmod +x gradlew
-          echo "🛠️ Building APK using Gradle..."
+          echo "🛠️ Building APK using Gradle 8.5..."
           ./gradlew assembleDebug
 
       - name: Upload APK
